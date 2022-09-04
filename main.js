@@ -43,4 +43,24 @@ class Blockchain {
         // Push it the chain array
         this.chain.push(newBlock);
     }
+    // Check if the block valid on the chain
+    isChainValid() {
+        // Loop throw all blocks 
+        for (let i = 1; i < this.chain.length; i++) {
+            // Grap the current Block
+            const currentBlock = this.chain[i];
+            // Grap The previus block of the current one
+            const previousBlock = this.chain[i - 1];
+            // Check if the hash of the block is still valid 
+            if(currentBlock.hash !== currentBlock.calculateHash()) {
+                return false;
+            }
+            // Check the previos hash is not equal to the hash of our previous block
+            if(currentBlock.previousHash !== previousBlock.hash) {
+                return false;
+            } 
+        }
+
+        return true;
+    }
 }
