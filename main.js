@@ -19,3 +19,15 @@ class Block {
         return SHA256(this.index + this.timestamp + this.previousHash + JSON.stringify(this.data)).toString();
     }
 }
+
+class Blockchain {
+    // Initializing our blockchain
+    constructor() {
+        // Chain property array of our blocks
+        this.chain = [this.createGenesisBlock()];
+    }
+    // First block in the blockchain must created manually. Genesis block
+    createGenesisBlock() {
+        return new Block(0, '04/09/2022', 'Genesis Block', '0');
+    }
+}
