@@ -30,4 +30,17 @@ class Blockchain {
     createGenesisBlock() {
         return new Block(0, '04/09/2022', 'Genesis Block', '0');
     }
+    // Get the lest block on the blockchain
+    getlatestBlock() {
+        return this.chain[this.chain.length - 1];
+    }
+    // Add a nea block to the chain 
+    addBlock(newBlock) {
+        // Set the previous hash to the last block 
+        newBlock.previousHash = this.getlatestBlock().hash;
+        // calcute hash for new block 
+        newBlock.hash = newBlock.calculateHash();
+        // Push it the chain array
+        this.chain.push(newBlock);
+    }
 }
