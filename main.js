@@ -12,11 +12,22 @@ class Block {
         this.previousHash = previousHash;
         //  Hash of our block we use crypto-js library
         this.hash = this.calculateHash();
+        // Number that mine the new block
+        this.nonce = 0;
     }
 
     // Calculate our block hash 
     calculateHash() {
-        return SHA256(this.index + this.timestamp + this.previousHash + JSON.stringify(this.data)).toString();
+        return SHA256(this.index + this.timestamp + this.previousHash + JSON.stringify(this.data) + this.nonce).toString();
+    }
+    
+    // Implement Proof of Work 
+    mineBlock(difficulty) {
+        while(this.hash.substring(0, difficulty) !== Array(difficulty +  1).join("0")) {
+            this.nonce++;
+            this.hash = this.calculateHash();
+        }
+        console.log("Block mined: " + this.hash);
     }
 }
 
@@ -25,6 +36,8 @@ class Blockchain {
     constructor() {
         // Chain property array of our blocks
         this.chain = [this.createGenesisBlock()];
+        // Difficulty number to find the right hash 
+        this.difficulty = 5;
     }
     // First block in the blockchain must created manually. Genesis block
     createGenesisBlock() {
@@ -38,8 +51,8 @@ class Blockchain {
     addBlock(newBlock) {
         // Set the previous hash to the last block 
         newBlock.previousHash = this.getlatestBlock().hash;
-        // calcute hash for new block 
-        newBlock.hash = newBlock.calculateHash();
+        // Mine newBlock 
+        newBlock.mineBlock(this.difficulty);
         // Push it the chain array
         this.chain.push(newBlock);
     }
@@ -64,3 +77,10 @@ class Blockchain {
         return true;
     }
 }
+
+let byeweb2 = new Blockchain();
+
+console.log("Mining block 1...");
+byeweb2.addBlock(new Block(1, "05/09/2022", { amount: 4 }));
+console.log("Mining block 2...");
+byeweb2.addBlock(new Block(2, "05/09/2022", { amount: 10 }));
