@@ -1,13 +1,19 @@
 // Import Crypto-js library 
 const SHA256 = require('crypto-js/sha256');
+
+class Transactions {
+    constructor(fromAddress, toAddress, amount) {
+        this.fromAddress = fromAddress;
+        this.toAddress = toAddress;
+        this.amount = amount;
+    }
+}
 class Block {
-    constructor(index, timestamp, data, previousHash = '') {
-        // The index option. Tell us where the block sits on the chain
-        this.index = index;
+    constructor(timestamp, transactions, previousHash = '') {
         // Timestamp tell us when the block created
         this.timestamp = timestamp;
-        // Data might include any type of data
-        this.data = data;
+        // Where hold transactions
+        this.transactions = transactions;
         // PreviousHash string that containe the hash of the pervious block
         this.previousHash = previousHash;
         //  Hash of our block we use crypto-js library
@@ -41,7 +47,7 @@ class Blockchain {
     }
     // First block in the blockchain must created manually. Genesis block
     createGenesisBlock() {
-        return new Block(0, '04/09/2022', 'Genesis Block', '0');
+        return new Block('04/09/2022', 'Genesis Block', '0');
     }
     // Get the lest block on the blockchain
     getlatestBlock() {
@@ -79,8 +85,3 @@ class Blockchain {
 }
 
 let byeweb2 = new Blockchain();
-
-console.log("Mining block 1...");
-byeweb2.addBlock(new Block(1, "05/09/2022", { amount: 4 }));
-console.log("Mining block 2...");
-byeweb2.addBlock(new Block(2, "05/09/2022", { amount: 10 }));
