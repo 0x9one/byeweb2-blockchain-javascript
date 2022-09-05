@@ -43,25 +43,52 @@ class Blockchain {
         // Chain property array of our blocks
         this.chain = [this.createGenesisBlock()];
         // Difficulty number to find the right hash 
-        this.difficulty = 5;
+        this.difficulty = 4;
+        this.pendingTransactions = [];
+        this.miningReward = 100;
     }
+
     // First block in the blockchain must created manually. Genesis block
     createGenesisBlock() {
         return new Block('04/09/2022', 'Genesis Block', '0');
     }
+
     // Get the lest block on the blockchain
     getlatestBlock() {
         return this.chain[this.chain.length - 1];
     }
-    // Add a nea block to the chain 
-    addBlock(newBlock) {
-        // Set the previous hash to the last block 
-        newBlock.previousHash = this.getlatestBlock().hash;
-        // Mine newBlock 
-        newBlock.mineBlock(this.difficulty);
-        // Push it the chain array
-        this.chain.push(newBlock);
+
+    minePendingTransactions(miningRewardAddress) {
+        let block = new Block(Date.now(), this.pendingTransactions);
+        block.mineBlock(this.difficulty);
+        console.log('Blok successfully mined!');
+        this.chain.push(block);
+        this.pendingTransactions = [
+            new Transactions(null, miningRewardAddress, this.miningReward)
+        ];
     }
+
+    createTransaction(transaction) {
+        this.pendingTransactions.push(transaction);
+    }
+
+    getBalanceOfAddress(address) {
+        let balance = 0;
+        for(const block of this.chain) {
+            for(const trans of block.transactions) {
+                if(trans.fromAddress === address) {
+                    balance -= trans.amount;
+                }
+
+                if(trans.toAddress === address) {
+                    balance += trans.amount;
+                }
+            }
+        }
+
+        return balance;
+    }
+
     // Check if the block valid on the chain
     isChainValid() {
         // Loop throw all blocks 
@@ -85,3 +112,13 @@ class Blockchain {
 }
 
 let byeweb2 = new Blockchain();
+byeweb2.createTransaction(new Transactions('address1', 'address2', 100));
+byeweb2.createTransaction(new Transactions('address2', 'address1', 50));
+
+console.log('\n Starting the miner...');
+byeweb2.minePendingTransactions('byeweb2-address');
+console.log('\n Balance of byeweb2 is', byeweb2.getBalanceOfAddress('byeweb2-address'));
+
+console.log('\n Starting the miner again...');
+byeweb2.minePendingTransactions('byeweb2-address');
+console.log('\n Balance of byeweb2 is', byeweb2.getBalanceOfAddress('byeweb2-address'));
